@@ -14,7 +14,7 @@ Building a basic finance tracker data pipeline, from Plaid to basic BI interface
 
 ## Architecture
 
-```
+```mermaid
 flowchart TD
     A[Plaid API] --> B["Scheduled pull<br/>Cloud Scheduler + Cloud Run (Python)"]
     B --> C[("BigQuery<br/>single source of truth")]
@@ -22,7 +22,7 @@ flowchart TD
     C --> E["Path B: Streamlit app<br/>pandas + Plotly"]
     E --> F["Streamlit Community Cloud<br/>free host, deploys from GitHub"]
     D --> G[Phone browser]
-    F --> G
+    F --> G[Phone browser]
 ```
 
 Both paths read the same BigQuery tables, so Path A can be built first and Path B added later with no pipeline changes.
