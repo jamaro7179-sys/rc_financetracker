@@ -1,3 +1,5 @@
+// this is a JSON object that represents the response from the Plaid API when syncing transactions. NOT real data
+
 {
     "accounts": [
         {
