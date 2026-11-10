@@ -37,12 +37,14 @@ CREATE TABLE `ranchcash-financetracker.finances.sync_log` (
 );
 
 
--- Future tables/views
-
 CREATE TABLE `ranchcash-financetracker.finance.vendor_map` (
   merchant_name STRING,
   my_category STRING
 );
+
+
+-- Future tables/views
+
 
 CREATE VIEW `ranchcash-financetracker.finance.v_transactions` AS
 SELECT
