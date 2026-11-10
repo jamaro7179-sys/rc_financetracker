@@ -1,8 +1,8 @@
 -- Run in BigQuery after creating dataset `finance` (location: US)
--- Running on 11/6/2026:
+-- Finally Ran on 11/09/2026:
 
-CREATE TABLE `ranchcash-financetracker.finance.accounts` (
-  account_id STRING PRIMARY KEY,
+CREATE TABLE `ranchcash-financetracker.finances.accounts` (
+  account_id STRING,
   official_name STRING,
   name STRING,
   type STRING,
@@ -11,8 +11,8 @@ CREATE TABLE `ranchcash-financetracker.finance.accounts` (
   last_synced_at TIMESTAMP
 );
 
-CREATE TABLE `ranchcash-financetracker.finance.transactions` (
-  transaction_id STRING PRIMARY KEY,
+CREATE TABLE `ranchcash-financetracker.finances.transactions` (
+  transaction_id STRING,
   account_id STRING,
   amount NUMERIC,
   date DATE, -- posted date (or occurred date if pending)
@@ -28,8 +28,8 @@ CREATE TABLE `ranchcash-financetracker.finance.transactions` (
 )
 PARTITION BY date;
 
-CREATE TABLE `ranchcash-financetracker.finance.sync_log` (
-  sync_id STRING PRIMARY KEY,
+CREATE TABLE `ranchcash-financetracker.finances.sync_log` (
+  sync_id STRING,
   run_at TIMESTAMP,
   transactions_pulled INT64,
   status STRING,
@@ -40,7 +40,7 @@ CREATE TABLE `ranchcash-financetracker.finance.sync_log` (
 -- Future tables/views
 
 CREATE TABLE `ranchcash-financetracker.finance.vendor_map` (
-  merchant_name STRING PRIMARY KEY,
+  merchant_name STRING,
   my_category STRING
 );
 
