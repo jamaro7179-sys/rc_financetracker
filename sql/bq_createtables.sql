@@ -25,8 +25,7 @@ CREATE TABLE `ranchcash-financetracker.finances.transactions` (
   pending BOOL,
   iso_currency_code STRING,
   created_at TIMESTAMP
-)
-PARTITION BY date;
+);
 
 CREATE TABLE `ranchcash-financetracker.finances.sync_log` (
   sync_id STRING,
@@ -35,21 +34,3 @@ CREATE TABLE `ranchcash-financetracker.finances.sync_log` (
   status STRING,
   next_cursor STRING
 );
-
-
-CREATE TABLE `ranchcash-financetracker.finance.vendor_map` (
-  merchant_name STRING,
-  my_category STRING
-);
-
-
--- Future tables/views
-
-
-CREATE VIEW `ranchcash-financetracker.finance.v_transactions` AS
-SELECT
-  t.*,
-  COALESCE(t.authorized_date, t.date) AS swipe_date,
-  COALESCE(v.my_category, t.category_primary) AS category
-FROM `ranchcash-financetracker.finance.transactions` t
-LEFT JOIN `ranchcash-financetracker.finance.vendor_map` v USING (merchant_name);
