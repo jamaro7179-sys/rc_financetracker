@@ -1,16 +1,20 @@
 """Plaid -> BigQuery. Pulls full history via /transactions/sync and overwrites the tables each run."""
-
-import os, json, datetime as dt
+import os
+import json
+import datetime as dt
 import plaid
 from plaid.api import plaid_api
 from plaid.model.transactions_sync_request import TransactionsSyncRequest
 from google.cloud import bigquery
 
 D = "ranchcash-financetracker.finances"
+
 api = plaid_api.PlaidApi(plaid.ApiClient(plaid.Configuration(
-    host=getattr(plaid.Environment, os.environ.get("PLAID_ENV", "Sandbox")),
-    api_key={"clientId": os.environ["PLAID_CLIENT_ID"], "secret": os.environ["PLAID_SECRET"]})))
+    host = getattr(plaid.Environment, os.environ.get("PLAID_ENV", "Production")),
+    api_key = {"clientId": os.environ["PLAID_CLIENT_ID"], "secret": os.environ["PLAID_SECRET"]})))
+
 bq = bigquery.Client()
+
 now = dt.datetime.now(dt.timezone.utc).isoformat()
 
 # Empty cursor = full history. has_more pages through it; no cursor stored, we overwrite each run.
@@ -22,13 +26,21 @@ while more:
     txs += r["added"]
     cursor, more = r["next_cursor"], r["has_more"]
 
-rows = [{"transaction_id": t["transaction_id"], "account_id": t["account_id"], "amount": t["amount"],
-         "date": t["date"], "authorized_date": t.get("authorized_date"),
-         "merchant_name": t.get("merchant_name"), "name": t.get("name"), "website": t.get("website"),
-         "category_primary": (t.get("personal_finance_category") or {}).get("primary"),
-         "category_detailed": (t.get("personal_finance_category") or {}).get("detailed"),
-         "pending": t["pending"], "iso_currency_code": t.get("iso_currency_code"),
-         "created_at": now} for t in txs]
+rows = [{
+    "transaction_id": t["transaction_id"], 
+    "account_id": t["account_id"], 
+    "amount": t["amount"],
+    "date": t["date"], 
+    "authorized_date": t.get("authorized_date"),
+    "merchant_name": t.get("merchant_name"), 
+    "name": t.get("name"), 
+    "website": t.get("website"),
+    "category_primary": (t.get("personal_finance_category") or {}).get("primary"),
+    "category_detailed": (t.get("personal_finance_category") or {}).get("detailed"),
+    "pending": t["pending"], 
+    "iso_currency_code": t.get("iso_currency_code"),
+    "created_at": now} for t in txs]
+
 accts = [{**{k: a.get(k) for k in ("account_id", "official_name", "name", "type", "subtype", "mask")},
           "last_synced_at": now} for a in r["accounts"]]
 
